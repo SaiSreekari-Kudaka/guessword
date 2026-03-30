@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎮 Word Guess Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+        }
+        .game-card {
+            background: rgba(0,0,0,0.75);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            width: 400px;
+            text-align: center;
+        }
+        h1 { font-size: 22px; margin-bottom: 20px; color: #ffd700; text-shadow: 2px 2px 5px #000; }
+        #word { font-size: 28px; letter-spacing: 12px; margin: 20px 0; }
+        input[type="text"] { padding: 12px; font-size: 16px; width: 70%; border-radius: 10px; border: none; outline: none; margin-bottom: 15px; }
+        button { padding: 12px 20px; font-size: 16px; border-radius: 10px; border: none; background-color: #ff9800; color: #fff; cursor: pointer; font-weight: bold; transition: 0.3s; margin: 5px; }
+        button:hover { background-color: #ffc107; transform: scale(1.05); }
+        #attempts, #message { margin-top: 15px; font-size: 16px; }
+        #message { font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <h1>🎮 Word Guessing Game</h1>
+    <div id="word"></div>
+    <input type="text" id="guessInput" placeholder="Enter your guess">
+    <br>
+    <button onclick="checkGuess()">Submit</button>
+    <button onclick="playAgain()" id="playAgainBtn" style="display:none;">🔄 Play Again</button>
+    <div id="attempts"></div>
+    <div id="message"></div>
+</div>
+
+<script>
+    const words = ["python", "computer", "programming", "developer", "keyboard", "internet", "software", "hardware", "network", "database"];
+    let word, hiddenWord, attempts;
+
+    function initGame() {
+        word = words[Math.floor(Math.random() * words.length)];
+        attempts = 3;
+        hiddenWord = hideLetters(word);
+        document.getElementById("word").innerText = hiddenWord;
+        document.getElementById("attempts").innerText = "Attempts left: " + attempts;
+        document.getElementById("message").innerText = "";
+        document.getElementById("guessInput").value = "";
+        document.getElementById("playAgainBtn").style.display = "none";
+        document.getElementById("guessInput").disabled = false;
+    }
+
+    function hideLetters(word) {
+        let result = "";
+        for (let letter of word) {
+            result += Math.random() < 0.5 ? "_" : letter;
+        }
+        return result;
+    }
+
+    function checkGuess() {
+        const guess = document.getElementById("guessInput").value.toLowerCase();
+        if (!guess) return;
+
+        const messageEl = document.getElementById("message");
+        const attemptsEl = document.getElementById("attempts");
+
+        if (guess === word) {
+            messageEl.innerText = "✅ Correct! You guessed it!";
+            messageEl.style.color = "#00ff00";
+            document.getElementById("word").innerText = word;
+            endGame();
+        } else {
+            attempts--;
+            attemptsEl.innerText = "Attempts left: " + attempts;
+
+            if (attempts === 0) {
+                messageEl.innerText = "❌ Game Over! Word was: " + word;
+                messageEl.style.color = "#ff4444";
+                document.getElementById("word").innerText = word;
+                endGame();
+            } else {
+                messageEl.innerText = "❌ Wrong guess!";
+                messageEl.style.color = "#ffeb3b";
+            }
+        }
+
+        document.getElementById("guessInput").value = "";
+        document.getElementById("guessInput").focus();
+    }
+
+    function endGame() {
+        document.getElementById("playAgainBtn").style.display = "inline-block";
+        document.getElementById("guessInput").disabled = true;
+    }
+
+    function playAgain() {
+        initGame();
+    }
+
+    // Initialize the game on page load
+    initGame();
+</script>
+
+</body>
+</html>
